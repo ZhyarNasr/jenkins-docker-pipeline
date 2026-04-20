@@ -18,7 +18,7 @@ pipeline {
                 script {
                     // This uses the Docker Pipeline plugin logic
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-creds') {
-                        def myImage = docker.build("zhyarnasr/my-app:latest")
+                        def myImage = docker.build("zhyar1/my-app:latest")
                         myImage.push()
                     }
                 }
