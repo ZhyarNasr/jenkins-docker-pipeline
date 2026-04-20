@@ -1,28 +1,28 @@
 pipeline {
     agent any
+    
+    tools {
+        nodejs 'node18' 
+    }
+
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
         stage('Install & Test') {
             steps {
-                // This simulates the "Test" activity mentioned in your requirements
                 sh 'npm install'
                 sh 'node test.js'
             }
         }
         stage('Build Image') {
             steps {
-                sh 'docker build -t your-dockerhub-username/my-app:latest .'
+                // Change 'zhyarnasr' to your actual Docker Hub username
+                sh 'docker build -t zhyarnasr/my-app:latest .'
             }
         }
         stage('Push to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                    sh "docker login -u ${USER} -p ${PASS}"
-                    sh 'docker push your-dockerhub-username/my-app:latest'
+                    sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
+                    sh 'docker push zhyarnasr/my-app:latest'
                 }
             }
         }
