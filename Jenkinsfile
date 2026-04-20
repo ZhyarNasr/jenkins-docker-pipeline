@@ -12,17 +12,15 @@ pipeline {
                 sh 'node test.js'
             }
         }
-        stage('Build Image') {
+        
+        stage('Build & Push') {
             steps {
-                // Change 'zhyarnasr' to your actual Docker Hub username
-                sh 'docker build -t zhyarnasr/my-app:latest .'
-            }
-        }
-        stage('Push to Docker Hub') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                    sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
-                    sh 'docker push zhyarnasr/my-app:latest'
+                script {
+                    // This uses the Docker Pipeline plugin logic
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-creds') {
+                        def myImage = docker.build("zhyarnasr/my-app:latest")
+                        myImage.push()
+                    }
                 }
             }
         }
